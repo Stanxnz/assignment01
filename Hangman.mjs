@@ -1,9 +1,32 @@
-import { ANSI } from "./Ansi.mjs";
-import { HANGMAN_UI } from "./Graphics.mjs";
+//#region Dont look behind the curtain
+// Do not worry about the next two lines, they just need to be there. 
+import * as readlinePromises from 'node:readline/promises';
+const rl = readlinePromises.createInterface({ input: process.stdin, output: process.stdout });
 
-const correctWord = "Dog".toLowerCase
+async function askQuestion(question) {
+    return await rl.question(question);
+}
+
+//#endregion
+
+import { ANSI } from './Ansi.mjs';
+import { HANGMAN_UI } from './Graphics.mjs';
+
+/*
+    1. Pick a word
+    2. Draw one "line" per char in the picked word.
+    3. Ask player to guess one char || the word (knowledge: || is logical or)
+    4. Check the guess.
+    5. If guess was incorect; continue drawing 
+    6. Update char display (used chars and correct)
+    7. Is the game over (drawing complete or word guessed)
+    8. if not game over start at 3.
+    9. Game over
+*/
+
+const correctWord = "Cat".toLowerCase();
 const numberOfCharInWord = correctWord.length;
-let guessedWord = "".padStart(correctWord.length, "___"); // "" is an empty string that we then fill with _ based on the number of char in the correct word.
+let guessedWord = "".padStart(correctWord.length, "_"); // "" is an empty string that we then fill with _ based on the number of char in the correct word.
 let wordDisplay = "";
 let isGameOver = false;
 let wasGuessCorrect = false;
@@ -30,18 +53,29 @@ function drawWordDisplay() {
     return wordDisplay;
 }
 
-while (isGameOver==false) {
-        console.log(ANSI.CLEAR_SCREEN);
-    console.log(drawWordDisplay)();
-    console.log(drawlist(wrongGuesses, ANSI.COLOR.RED));
+function drawList(list, color) {
+    let output = color;
+    for (let i = 0; i < list.length; i++) {
+        output += list[i] + " ";
+    }
+
+    return output + ANSI.RESET;
+}
+
+// Continue playing until the game is over. 
+while (isGameOver == false) {
+
+    console.log(ANSI.CLEAR_SCREEN);
+    console.log(drawWordDisplay());
+    console.log(drawList(wrongGuesses, ANSI.COLOR.RED));
     console.log(HANGMAN_UI[wrongGuesses.length]);
 
-    const answer = (await askQuestion("guess a char or the word: ")).toLowerCase();
+    const answer = (await askQuestion("Guess a char or the word : ")).toLowerCase();
 
-    if (answer==correctWord){
+    if (answer == correctWord) {
         isGameOver = true;
         wasGuessCorrect = true;
-    } else if (ifPlayerGuessedLetter(answer)){
+    } else if (ifPlayerGuessedLetter(answer)) {
 
         let org = guessedWord;
         guessedWord = "";
@@ -51,25 +85,30 @@ while (isGameOver==false) {
             if (correctWord[i] == answer) {
                 guessedWord += answer;
                 isCorrect = true;
-    }else{
-        guessedWord += org[i];
-    }
-        
+            } else {
+                // If the currents answer is not what is in the space, we should keep the char that is allready in that space. 
+                guessedWord += org[i];
+            }
+
+        }
+
+        if (isCorrect == false) {
+            wrongGuesses.push(answer);
+        } else if (guessedWord == correctWord) {
+            isGameOver = true;
+            wasGuessCorrect = true;
+        }
     }
 
-    if (isCorrect == false){
-        wrongGuesses.push(answer);
-    } else if (guessedWord == correctWord){
+    // Read as "Has the player made to many wrong guesses". 
+    // This works because we cant have more wrong guesses then we have drawings. 
+    if (wrongGuesses.length == HANGMAN_UI.length-1) {
         isGameOver = true;
-        wasGuessCorrect = true;
-    }
     }
 
-if (wrongGuesses.length == HANGMAN_UI.length){
-    isGameOver = true;
 }
 
-}
+// OUR GAME HAS ENDED.
 
 console.log(ANSI.CLEAR_SCREEN);
 console.log(drawWordDisplay());
@@ -77,12 +116,14 @@ console.log(drawList(wrongGuesses, ANSI.COLOR.RED));
 console.log(HANGMAN_UI[wrongGuesses.length]);
 
 if (wasGuessCorrect) {
-    console.log(ANSI.COLOR.YELLOW + "Congratulations you guessed the word correct!");
+    console.log(ANSI.COLOR.YELLOW + "Congratulations you guessed the right word!");
 }
-console.log("Game Over");
+console.log("A man has been hanged");
 process.exit();
 
 function ifPlayerGuessedLetter(answer) {
     return answer.length == 1
 }
 
+// answer = a
+// correctWord = Catalana
