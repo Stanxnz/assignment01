@@ -77,7 +77,7 @@ console.log(drawList(wrongGuesses, ANSI.COLOR.RED));
 console.log(HANGMAN_UI[wrongGuesses.length]);
 
 if (wasGuessCorrect) {
-    console.log(ANSI.COLOR.YELLOW + "Congratulations the man did not get hanged");
+    console.log(ANSI.COLOR.YELLOW + "Congratulations you guessed the word correct!");
 }
 console.log("Game Over");
 process.exit();
