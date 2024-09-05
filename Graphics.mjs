@@ -94,6 +94,6 @@ const HANGMAN_UI = [
      /|\\  |
      / \\  |
           |
-    =========`]
+    =========`];
 
 export { HANGMAN_UI }
