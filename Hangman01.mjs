@@ -1,6 +1,7 @@
 import { createInterface } from 'readline/promises';
 import {stdin as input, stdout as output} from 'process';
 import { ANSI } from './Ansi.mjs';
+import { HANGMAN_UI } from './Graphics.mjs';
 
 //pick a word
 const wordOptions = ['dog', 'cat', 'mouse', 'shark', 'giraffe', 'snake'];
@@ -14,107 +15,10 @@ let totalGuesses = 0;
 const rl = createInterface({input, output});
 
 //make the hangman
-const hangmanStages = [
-    `
+const hangmanStages = HANGMAN_UI
 
-    
-    
-    
-    
-    
-                 `
-    , `
-
-    =========`, `
-     
-         |
-         |
-         |
-         |
-         |
-    =========`,
-    `
-
-
-         +
-         |
-         |
-         |
-         |
-         |
-    =========`,
-   `
-
-
-      ---+
-         |
-         |
-         |
-         |
-         |
-    =========`,
-   `
-     +---+
-         |
-         |
-         |
-         |
-         |
-    =========`,
-    `
-      +---+
-      |   |
-          |
-          |
-          |
-          |
-    =========`, `
-      +---+
-      |   |
-      O   |
-          |
-          |
-          |
-    =========`, `
-      +---+
-      |   |
-      O   |
-      |   |
-          |
-          |
-    =========`, `
-      +---+
-      |   |
-      O   |
-     /|   |
-          |
-          |
-    =========`, `
-      +---+
-      |   |
-      O   |
-     /|\\  |
-          |
-          |
-    =========`, `
-      +---+
-      |   |
-      O   |
-     /|\\  |
-     /    |
-          |
-    =========`, `
-      +---+
-      |   |
-      O   |
-     /|\\  |
-     / \\  |
-          |
-    =========`];
-
-
-console.log('Hello and welcome to my hangman game');
-console.log('Your word is: ' + hiddenWord.join(' ') + '\n');
+console.log(ANSI.COLOR.GREEN + 'Hello and welcome to my hangman game');
+console.log(ANSI.RESET + 'Your word is: ' + hiddenWord.join(' ') + '\n');
 
 const promptUser = async() => {
     const choice = await rl.question('You can now guess a [letter] or the [word].');
@@ -133,21 +37,24 @@ const promptLetterGuess = async () => {
     const letter = await rl.question('Guess a letter: ');
 
     if(letter.length !== 1 || !letter.match(/[a-z]/)) {
-        console.log('Please enter a letter from the alphabet.');
+        console.log(ANSI.COLOR.YELLOW + 'Please enter a letter from the alphabet.');
+        console.log(ANSI.RESET);
         return await promptLetterGuess();
     }
 
     totalGuesses++;
 
     if(guessedLetters.includes(letter)){
-        console.log('You have already guessed this letter.');
+        console.log(ANSI.COLOR.YELLOW + 'You have already guessed this letter.');
+        console.log(ANSI.RESET);
         return await promptLetterGuess();
     }
 
     guessedLetters.push(letter);
 
     if (chosenWord.includes(letter)){
-        console.log('You guessed correct!');
+        console.log(ANSI.COLOR.GREEN + 'You guessed correct!');
+        console.log(ANSI.RESET);
         for (let i = 0; i < chosenWord.length; i++){
             if (chosenWord[i] === letter){
                 hiddenWord[i] = letter;
@@ -156,19 +63,22 @@ const promptLetterGuess = async () => {
     } else {
         numberOfAttempt--;
         wrongGuesses.push(letter);
-        console.log('You have guessed wrong, you have ' + numberOfAttempt + ' attempts left.');
+        console.log(ANSI.COLOR.RED + 'You have guessed wrong, you have ' + numberOfAttempt + ' attempts left.');
+        console.log(ANSI.RESET);
         console.log(hangmanStages[12 - numberOfAttempt]);
     }
     
     console.log(hiddenWord.join(' ')+ '\n');
     if (!hiddenWord.includes('_')){
-        console.log('Congratulations, you have guessed the word! The word was: ' + chosenWord)
+        console.log(ANSI.COLOR.GREEN + 'Congratulations, you have guessed the word! The word was: ' + chosenWord);
+        console.log(ANSI.RESET);
         displayStats();
         return rl.close();
     }
 
     if (numberOfAttempt === 0){
-        console.log('A man has been hanged! The word was: ' + chosenWord);
+        console.log(ANSI.COLOR.RED + 'A man has been hanged! The word was: ' + chosenWord);
+        console.log(ANSI.RESET);
         console.log(hangmanStages[12]);
         displayStats();
         return rl.close();
@@ -183,17 +93,20 @@ const promptWordGuess = async() => {
     totalGuesses++;
 
     if (wordGuess.toLowerCase() === chosenWord){
-         console.log('Congratulations! You guessed the word! The word was: ' + chosenWord);
+         console.log(ANSI.COLOR.GREEN + 'Congratulations, You guessed the word! The word was: ' + chosenWord);
+         console.log(ANSI.RESET);
          displayStats();
          rl.close();
     }else{
         numberOfAttempt--;
         wrongGuesses.push(wordGuess);
-        console.log('You have guessed wrong.');
+        console.log(ANSI.COLOR.RED + 'You have guessed wrong.');
+        console.log(ANSI.RESET);
         console.log(hangmanStages[10 - numberOfAttempt])
 
         if (numberOfAttempt === 0) {
-            console.log('A man has been hanged! The word was: ' + chosenWord);
+            console.log(ANSI.COLOR.RED + 'A man has been hanged! The word was: ' + chosenWord);
+            console.log(ANSI.RESET);
             console.log(hangmanStages[10]);
             displayStats();
             rl.close();
