@@ -73,7 +73,7 @@ const promptLetterGuess = async () => {
         console.log(ANSI.COLOR.GREEN + 'Congratulations, you have guessed the word! The word was: ' + chosenWord);
         console.log(ANSI.RESET);
         displayStats();
-        return rl.close();
+        await askToPlayAgain();
     }
 
     if (numberOfAttempt === 0){
@@ -81,7 +81,7 @@ const promptLetterGuess = async () => {
         console.log(ANSI.RESET);
         console.log(hangmanStages[12]);
         displayStats();
-        return rl.close();
+        await askToPlayAgain();
     }
 
     await promptUser();
@@ -96,7 +96,7 @@ const promptWordGuess = async() => {
          console.log(ANSI.COLOR.GREEN + 'Congratulations, You guessed the word! The word was: ' + chosenWord);
          console.log(ANSI.RESET);
          displayStats();
-         rl.close();
+         await askToPlayAgain();
     }else{
         numberOfAttempt--;
         wrongGuesses.push(wordGuess);
@@ -109,7 +109,7 @@ const promptWordGuess = async() => {
             console.log(ANSI.RESET);
             console.log(hangmanStages[10]);
             displayStats();
-            rl.close();
+            await askToPlayAgain();
         } else {
             await promptUser();
         }
@@ -125,5 +125,15 @@ const displayStats = () => {
     console.log( 'total wrong letters/words guessed: ' + wrongGuesses.join(', '));
 
 };
+
+const askToPlayAgain = async () => {
+    const playAgain = await rl.question('Do you want to play again? Type [yes] or [no]: ');
+    if(playAgain.toLowerCase() === 'yes'){
+        promptUser();
+    } else {
+        console.log('Thanks for playing my game!');
+        rl.close();
+    }
+}
 
 promptUser(); //start the game
