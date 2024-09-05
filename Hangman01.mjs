@@ -6,7 +6,7 @@ import { HANGMAN_UI} from './graphics.mjs';
 
 let chosenWord, hiddenWord, numberOfAttempt, guessedLetters, wrongGuesses, totalGuesses;
 
-//pick a word
+
 function startGame(){
     const wordOptions = ['dog', 'cat', 'mouse', 'shark', 'giraffe', 'snake'];
 	chosenWord = wordOptions[Math.floor(Math.random() * wordOptions.length)];
@@ -15,18 +15,16 @@ function startGame(){
 	guessedLetters = [];
 	wrongGuesses = [];
 	totalGuesses = 0;
-	//return {chosenWord, hiddenWord, numberOfAttempt, guessedLetters, wrongGuesses, totalGuesses};
+
 }
 function resetGame() {
-    //const gameData = startGame();
-	//startGame();
+
     console.log(ANSI.COLOR.GREEN + 'Hello and welcome to my hangman game');
     console.log(ANSI.RESET + 'Your word is: ' + hiddenWord.join(' ') + '\n');
-    //return gameData;
+
 }
 const rl = createInterface({input, output});
-//make the hangman
-const hangmanStages = HANGMAN_UI;
+
 const promptUser = async() => {
 	resetGame();
     const choice = await rl.question('You can now guess a [letter] or the [word].');
@@ -135,7 +133,7 @@ const displayStats = () => {
 const askToPlayAgain = async () => {
     const playAgain = await rl.question('Do you want to play again? Type [yes] or [no]: ');
     if(playAgain.toLowerCase() === 'yes'){
-        //const gameData = resetGame();
+        
 		startGame();
         promptUser();
     } else {
@@ -145,4 +143,4 @@ const askToPlayAgain = async () => {
 }
 
 startGame();
-promptUser(); //start the game
+promptUser(); 
