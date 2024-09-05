@@ -1,41 +1,47 @@
 import { createInterface } from 'readline/promises';
 import {stdin as input, stdout as output} from 'process';
-import { ANSI } from './Ansi.mjs';
-import { HANGMAN_UI } from './Graphics.mjs';
+import {ANSI} from './ansi.mjs';
+import { HANGMAN_UI} from './graphics.mjs';
+
+
+let chosenWord, hiddenWord, numberOfAttempt, guessedLetters, wrongGuesses, totalGuesses;
 
 //pick a word
-const wordOptions = ['dog', 'cat', 'mouse', 'shark', 'giraffe', 'snake'];
-let chosenWord = wordOptions[Math.floor(Math.random() * wordOptions.length)];
-let hiddenWord = Array(chosenWord.length).fill('_');
-let numberOfAttempt = 12;
-let guessedLetters = [];
-let wrongGuesses = [];
-let totalGuesses = 0;
-
+function startGame(){
+    const wordOptions = ['dog', 'cat', 'mouse', 'shark', 'giraffe', 'snake'];
+	chosenWord = wordOptions[Math.floor(Math.random() * wordOptions.length)];
+	hiddenWord = Array(chosenWord.length).fill('_');
+	numberOfAttempt = HANGMAN_UI.length;
+	guessedLetters = [];
+	wrongGuesses = [];
+	totalGuesses = 0;
+	//return {chosenWord, hiddenWord, numberOfAttempt, guessedLetters, wrongGuesses, totalGuesses};
+}
+function resetGame() {
+    //const gameData = startGame();
+	//startGame();
+    console.log(ANSI.COLOR.GREEN + 'Hello and welcome to my hangman game');
+    console.log(ANSI.RESET + 'Your word is: ' + hiddenWord.join(' ') + '\n');
+    //return gameData;
+}
 const rl = createInterface({input, output});
-
 //make the hangman
-const hangmanStages = HANGMAN_UI
-
-console.log(ANSI.COLOR.GREEN + 'Hello and welcome to my hangman game');
-console.log(ANSI.RESET + 'Your word is: ' + hiddenWord.join(' ') + '\n');
-
+const hangmanStages = HANGMAN_UI;
 const promptUser = async() => {
+	resetGame();
     const choice = await rl.question('You can now guess a [letter] or the [word].');
-
     if (choice.toLowerCase() === 'letter') {
         await promptLetterGuess();
     } else if(choice.toLowerCase()=== 'word'){
         await promptWordGuess();
     } else {
-        console.log('Please enter [letter] or [word].')
+        console.log('Please enter [letter] or [word].');
         await promptUser();
     }
 };
 
 const promptLetterGuess = async () => {
     const letter = await rl.question('Guess a letter: ');
-
     if(letter.length !== 1 || !letter.match(/[a-z]/)) {
         console.log(ANSI.COLOR.YELLOW + 'Please enter a letter from the alphabet.');
         console.log(ANSI.RESET);
@@ -65,7 +71,7 @@ const promptLetterGuess = async () => {
         wrongGuesses.push(letter);
         console.log(ANSI.COLOR.RED + 'You have guessed wrong, you have ' + numberOfAttempt + ' attempts left.');
         console.log(ANSI.RESET);
-        console.log(hangmanStages[12 - numberOfAttempt]);
+        console.log(HANGMAN_UI[HANGMAN_UI.length - numberOfAttempt]);
     }
     
     console.log(hiddenWord.join(' ')+ '\n');
@@ -79,7 +85,7 @@ const promptLetterGuess = async () => {
     if (numberOfAttempt === 0){
         console.log(ANSI.COLOR.RED + 'A man has been hanged! The word was: ' + chosenWord);
         console.log(ANSI.RESET);
-        console.log(hangmanStages[12]);
+        console.log(HANGMAN_UI[HANGMAN_UI.length - numberOfAttempt]);
         displayStats();
         await askToPlayAgain();
     }
@@ -102,12 +108,12 @@ const promptWordGuess = async() => {
         wrongGuesses.push(wordGuess);
         console.log(ANSI.COLOR.RED + 'You have guessed wrong.');
         console.log(ANSI.RESET);
-        console.log(hangmanStages[10 - numberOfAttempt])
+        console.log(HANGMAN_UI[HANGMAN_UI.length - numberOfAttempt])
 
         if (numberOfAttempt === 0) {
             console.log(ANSI.COLOR.RED + 'A man has been hanged! The word was: ' + chosenWord);
             console.log(ANSI.RESET);
-            console.log(hangmanStages[10]);
+            console.log(HANGMAN_UI[HANGMAN_UI.length - numberOfAttempt]);
             displayStats();
             await askToPlayAgain();
         } else {
@@ -129,6 +135,8 @@ const displayStats = () => {
 const askToPlayAgain = async () => {
     const playAgain = await rl.question('Do you want to play again? Type [yes] or [no]: ');
     if(playAgain.toLowerCase() === 'yes'){
+        //const gameData = resetGame();
+		startGame();
         promptUser();
     } else {
         console.log('Thanks for playing my game!');
@@ -136,4 +144,5 @@ const askToPlayAgain = async () => {
     }
 }
 
+startGame();
 promptUser(); //start the game
