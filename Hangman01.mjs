@@ -2,13 +2,14 @@ import { createInterface } from 'readline/promises';
 import {stdin as input, stdout as output} from 'process';
 import {ANSI} from './ansi.mjs';
 import { HANGMAN_UI} from './graphics.mjs';
+import { ANIMAL_NAMES } from './animals.mjs';
 
 
 let chosenWord, hiddenWord, numberOfAttempt, guessedLetters, wrongGuesses, totalGuesses;
 
 
 function startGame(){
-    const wordOptions = ['dog', 'cat', 'mouse', 'shark', 'giraffe', 'snake'];
+    const wordOptions = ANIMAL_NAMES;
 	chosenWord = wordOptions[Math.floor(Math.random() * wordOptions.length)];
 	hiddenWord = Array(chosenWord.length).fill('_');
 	numberOfAttempt = HANGMAN_UI.length;
