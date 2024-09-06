@@ -110,7 +110,9 @@ const promptWordGuess = async() => {
         wrongGuesses.push(wordGuess);
         console.log(ANSI.COLOR.RED + 'You have guessed wrong, you have ' + numberOfAttempt + ' attempts left.');
         console.log(ANSI.RESET);
-        console.log(HANGMAN_UI[HANGMAN_UI.length - numberOfAttempt])
+        console.log(HANGMAN_UI[HANGMAN_UI.length - numberOfAttempt]);
+
+        console.log(hiddenWord.join(' ') + '\n');
 
         if (numberOfAttempt === 0) {
             console.log(ANSI.COLOR.RED + 'A man has been hanged! The word was: ' + chosenWord);
