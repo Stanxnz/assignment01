@@ -30,7 +30,6 @@ startGame();
 resetGame();
 
 const promptUser = async() => {
-    //resetGame();
     const choice = await rl.question('You can now guess a [letter] or the [word].');
     if (choice.toLowerCase() === 'letter') {
         await promptLetterGuess();
