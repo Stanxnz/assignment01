@@ -17,16 +17,20 @@ function startGame(){
 	totalGuesses = 0;
 
 }
-function resetGame() {
 
+function resetGame() {
+    console.log(ANSI.CURSOR_HOME + ANSI.CLEAR_SCREEN);
     console.log(ANSI.COLOR.GREEN + 'Hello and welcome to my hangman game');
     console.log(ANSI.RESET + 'Your word is: ' + hiddenWord.join(' ') + '\n');
 
 }
 const rl = createInterface({input, output});
 
+startGame();
+resetGame();
+
 const promptUser = async() => {
-	resetGame();
+    //resetGame();
     const choice = await rl.question('You can now guess a [letter] or the [word].');
     if (choice.toLowerCase() === 'letter') {
         await promptLetterGuess();
@@ -104,7 +108,7 @@ const promptWordGuess = async() => {
     }else{
         numberOfAttempt--;
         wrongGuesses.push(wordGuess);
-        console.log(ANSI.COLOR.RED + 'You have guessed wrong.');
+        console.log(ANSI.COLOR.RED + 'You have guessed wrong, you have ' + numberOfAttempt + ' attempts left.');
         console.log(ANSI.RESET);
         console.log(HANGMAN_UI[HANGMAN_UI.length - numberOfAttempt])
 
@@ -126,15 +130,14 @@ const displayStats = () => {
     console.log('\nGame Stats: ');
     console.log('total guesses: ' + totalGuesses);
     console.log('total wrong guesses: ' + wrongGuesses);
-    console.log( 'total wrong letters/words guessed: ' + wrongGuesses.join(', '));
 
 };
 
 const askToPlayAgain = async () => {
     const playAgain = await rl.question('Do you want to play again? Type [yes] or [no]: ');
     if(playAgain.toLowerCase() === 'yes'){
-        
-		startGame();
+        startGame();
+        resetGame();
         promptUser();
     } else {
         console.log('Thanks for playing my game!');
