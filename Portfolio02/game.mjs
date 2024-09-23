@@ -8,7 +8,7 @@ const GAME_BOARD_SIZE = 3;
 const PLAYER_1 = 1;
 const PLAYER_2 = -1;
 
-// These are the valid choices for the menu. Testing
+// These are the valid choices for the menu.
 const MENU_CHOICES = {
     MENU_CHOICE_START_GAME: 1,
     MENU_CHOICE_SHOW_SETTINGS: 2,
